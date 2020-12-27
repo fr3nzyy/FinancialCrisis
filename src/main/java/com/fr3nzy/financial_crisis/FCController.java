@@ -1,6 +1,5 @@
 package com.fr3nzy.financial_crisis;
 
-import jdk.jfr.ContentType;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -21,7 +20,7 @@ public class FCController {
     }
 
     @GetMapping(value = "get", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<GSPC>> findAll() {
+    public ResponseEntity<List<GSPCModel>> findAll() {
         return new ResponseEntity<>(fcService.findAll(), HttpStatus.OK);
     }
 }

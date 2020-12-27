@@ -1,9 +1,11 @@
 package com.fr3nzy.financial_crisis;
 
 
+import com.fr3nzy.financial_crisis.dao.FCRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class FCService {
@@ -13,7 +15,9 @@ public class FCService {
         this.FCRepository = FCRepository;
     }
 
-    public List<GSPC> findAll() {
-        return FCRepository.getEntitiesByLimit(10);
+    public List<GSPCModel> findAll() {
+        List<GSPCModel> entitiesByLimit = FCRepository.getEntitiesByLimit(10).stream().
+                map(it -> new GSPCModel(it.getId(), it.getDate().toLocalDate(), it.getClose())).collect(Collectors.toList());
+        return entitiesByLimit;
     }
 }
