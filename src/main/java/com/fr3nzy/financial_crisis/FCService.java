@@ -16,7 +16,7 @@ public class FCService {
     }
 
     public List<GSPCModel> findAll() {
-        List<GSPCModel> entitiesByLimit = FCRepository.getEntitiesByLimit(10).stream().
+        List<GSPCModel> entitiesByLimit = FCRepository.findAll().stream().
                 map(it -> new GSPCModel(it.getId(), it.getDate().toLocalDate(), it.getClose())).collect(Collectors.toList());
         return entitiesByLimit;
     }

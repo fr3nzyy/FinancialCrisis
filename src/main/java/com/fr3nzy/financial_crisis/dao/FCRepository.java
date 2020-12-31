@@ -11,4 +11,7 @@ import java.util.List;
 public interface FCRepository extends JpaRepository<GSPC, Long> {
     @Query(value = "SELECT * FROM GSPC e ORDER BY e.date LIMIT :limit", nativeQuery=true)
     List<GSPC> getEntitiesByLimit(@Param("limit") int limit);
+
+    List<GSPC> findAll();
+
 }
