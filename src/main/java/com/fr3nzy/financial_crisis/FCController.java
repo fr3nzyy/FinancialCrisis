@@ -23,4 +23,9 @@ public class FCController {
     public ResponseEntity<List<GSPCModel>> findAll() {
         return new ResponseEntity<>(fcService.findAll(), HttpStatus.OK);
     }
+
+    @GetMapping(value = "getLimit", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<GSPCModel>> getEntitiesByLimit() {
+        return new ResponseEntity<>(fcService.getEntitiesByLimit(), HttpStatus.OK);
+    }
 }

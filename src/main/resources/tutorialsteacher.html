@@ -31,7 +31,7 @@
 </head>
 <body>
 <script>
-    d3.json('http://localhost:8080/get', function (data) {
+    d3.json('http://localhost:8080/getLimit', function (data) {
 
         // 2. Use the margin convention practice
         var margin = {top: 50, right: 50, bottom: 50, left: 50}
@@ -40,21 +40,12 @@
 
 
         var parseDate = d3.timeParse("%Y-%m-%d");
-        var formatDate = d3.timeFormat("%Y-%m-%d");
-        // parseDate('2003-01-01')
-        // formatDate = d3.time.format("%Y-%m-%d")
-        // formatDate(parseDate('2003-01-01'))
         var parsedData = data.map(function (d) {
             return {
                 date: (parseDate(d.date)),
-                // date: formatDate(parseDate(d.date)),
-                // date: d.date,
                 close: d.close
             }
         });
-
-        var width = 1500,
-            height = 1000;
 
         var closes = [];
         var dates = [];
@@ -62,13 +53,6 @@
             closes.push(element.close)
             dates.push(element.date)
         });
-        console.log(closes)
-        console.log(dates)
-
-        // var svg = d3.select("body")
-        //     .append("svg")
-        //     .attr("width", width)
-        //     .attr("height", height);
 
         var svg = d3.select("body").append("svg")
             .attr("width", width + margin.left + margin.right)
@@ -79,23 +63,17 @@
         var xscale = d3.scaleTime()
             .domain(d3.extent(dates))
             .range([0, width - 100]);
-
+        var x_axis = d3.axisBottom()
+            .scale(xscale);
         var yscale = d3.scaleLinear()
             .domain([0, d3.max(closes)])
             .range([height / 2, 0]);
-
-        var x_axis = d3.axisBottom()
-            .scale(xscale);
-
         var y_axis = d3.axisLeft()
             .scale(yscale);
-
         svg.append("g")
             .attr("transform", "translate(50, 10)")
             .call(y_axis);
-
         var xAxisTranslate = height / 2 + 10;
-
         svg.append("g")
             .attr("transform", "translate(50, " + xAxisTranslate + ")")
             .call(x_axis)
@@ -105,37 +83,30 @@
             .y(function(d) { return yscale(d.close); }) // set the y values for the line generator
             .curve(d3.curveMonotoneX) // apply smoothing to the line
 
-        svg.append("path")
+        const lines = svg.append("path")
             .datum(parsedData) // 10. Binds data to the line
             .attr("class", "line") // Assign a class for styling
             .attr("d", line); // 11. Calls the line generator
 
+//---------------------------TOOLTIP----------------------------//
 
-        // svg.append("path")
-        //     .datum(parsedData)
-        //     .attr("fill", "none")
-        //     .attr("stroke", "steelblue")
-        //     .attr("stroke-width", 1.5)
-        //     .attr("d", d3.line()
-        //         .x(function(d) { return x_axis(parsedData.date) })
-        //         .y(function(d) { return y_axis(parsedData.close) })
-        //     )
+        const tooltip = d3.select("body").append("div")
+            .attr("class", "tooltip")
+            .style("opacity", 0)
+            .style("position", "absolute");
 
-        // // Create scale
-        // var scale = d3.scaleLinear()
-        //     .domain([d3.min(closes), d3.max(closes)])
-        //     .range([0, width - 100]);
-        //
-        // // Add scales to axis
-        // var x_axis = d3.axisBottom()
-        //     .scale(scale);
-        //
-        // var y_axis = d3.axisLeft()
-        //     .scale(scale);
-        //
-        // //Append group and insert axis
-        // svg.append("g")
-        //     .call(x_axis);
+//---------------------------POINTS-----------------------------//
+        lines.selectAll("points")
+            .data(function(d) {return d})
+            .enter()
+            .append("circle")
+            .attr("cx", function(d) { return xscale(d.date); })
+            .attr("cy", function(d) { return yscale(d.close); })
+            .attr("r", 1)
+            .attr("class","point")
+            .style("opacity", 1);
+
+
     });
 </script>
 </body>

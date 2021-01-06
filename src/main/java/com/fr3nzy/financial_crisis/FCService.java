@@ -20,4 +20,10 @@ public class FCService {
                 map(it -> new GSPCModel(it.getId(), it.getDate().toLocalDate(), it.getClose())).collect(Collectors.toList());
         return entitiesByLimit;
     }
+
+    public List<GSPCModel> getEntitiesByLimit() {
+        List<GSPCModel> entitiesByLimit = FCRepository.getEntitiesByLimit(30).stream().
+                map(it -> new GSPCModel(it.getId(), it.getDate().toLocalDate(), it.getClose())).collect(Collectors.toList());
+        return entitiesByLimit;
+    }
 }
