@@ -1,5 +1,6 @@
-package com.fr3nzy.financial_crisis;
+package com.fr3nzy.financial_crisis.controller;
 
+import com.fr3nzy.financial_crisis.service.FCService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -25,7 +26,7 @@ public class FCController {
     }
 
     @GetMapping(value = "getLimit", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<GSPCModel>> getEntitiesByLimit() {
+    public ResponseEntity<List<GSPCLightModel>> getEntitiesByLimit() {
         return new ResponseEntity<>(fcService.getEntitiesByLimit(), HttpStatus.OK);
     }
 }

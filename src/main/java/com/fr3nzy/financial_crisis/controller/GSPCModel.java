@@ -1,4 +1,4 @@
-package com.fr3nzy.financial_crisis;
+package com.fr3nzy.financial_crisis.controller;
 
 import java.time.LocalDate;
 

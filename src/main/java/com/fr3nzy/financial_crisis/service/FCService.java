@@ -1,6 +1,8 @@
-package com.fr3nzy.financial_crisis;
+package com.fr3nzy.financial_crisis.service;
 
 
+import com.fr3nzy.financial_crisis.controller.GSPCLightModel;
+import com.fr3nzy.financial_crisis.controller.GSPCModel;
 import com.fr3nzy.financial_crisis.dao.FCRepository;
 import org.springframework.stereotype.Service;
 
@@ -16,14 +18,12 @@ public class FCService {
     }
 
     public List<GSPCModel> findAll() {
-        List<GSPCModel> entitiesByLimit = FCRepository.findAll().stream().
+        return FCRepository.findAll().stream().
                 map(it -> new GSPCModel(it.getId(), it.getDate().toLocalDate(), it.getClose())).collect(Collectors.toList());
-        return entitiesByLimit;
     }
 
-    public List<GSPCModel> getEntitiesByLimit() {
-        List<GSPCModel> entitiesByLimit = FCRepository.getEntitiesByLimit(30).stream().
-                map(it -> new GSPCModel(it.getId(), it.getDate().toLocalDate(), it.getClose())).collect(Collectors.toList());
-        return entitiesByLimit;
+    public List<GSPCLightModel> getEntitiesByLimit() {
+        return FCRepository.getEntitiesByLimit(30).stream().
+                map(it -> new GSPCLightModel(it.getDate().toLocalDate(), it.getClose())).collect(Collectors.toList());
     }
 }

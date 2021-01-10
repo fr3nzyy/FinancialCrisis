@@ -1,33 +1,7 @@
 <html>
-<style type="text/css">
-    /* 13. Basic Styling with CSS */
-
-    /* Style the lines by removing the fill and applying a stroke */
-    .line {
-        fill: none;
-        stroke: #070000;
-        stroke-width: 2;
-    }
-
-    .overlay {
-        fill: none;
-        pointer-events: all;
-    }
-
-    /* Style the dots by assigning a fill and stroke */
-    .dot {
-        fill: #ffab00;
-        stroke: #fff;
-    }
-
-    .focus circle {
-        fill: none;
-        stroke: steelblue;
-    }
-
-</style>
 <head>
-    <script src="https://d3js.org/d3.v4.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="styles.css">
+  <script src="https://d3js.org/d3.v4.min.js"></script>
 </head>
 <body>
 <script>
@@ -40,12 +14,16 @@
 
 
         var parseDate = d3.timeParse("%Y-%m-%d");
+        var formatDate = d3.timeFormat("%Y-%m-%d");
         var parsedData = data.map(function (d) {
             return {
                 date: (parseDate(d.date)),
                 close: d.close
             }
         });
+
+        var width = 1500,
+            height = 1000;
 
         var closes = [];
         var dates = [];
@@ -79,34 +57,174 @@
             .call(x_axis)
 
         var line = d3.line()
-            .x(function(d) { return xscale(d.date); }) // set the x values for the line generator
-            .y(function(d) { return yscale(d.close); }) // set the y values for the line generator
+            .x(function (d) {
+                return xscale(d.date);
+            }) // set the x values for the line generator
+            .y(function (d) {
+                return yscale(d.close);
+            }) // set the y values for the line generator
             .curve(d3.curveMonotoneX) // apply smoothing to the line
 
         const lines = svg.append("path")
             .datum(parsedData) // 10. Binds data to the line
             .attr("class", "line") // Assign a class for styling
             .attr("d", line); // 11. Calls the line generator
-
-//---------------------------TOOLTIP----------------------------//
-
+// tooltip
         const tooltip = d3.select("body").append("div")
             .attr("class", "tooltip")
             .style("opacity", 0)
             .style("position", "absolute");
-
-//---------------------------POINTS-----------------------------//
-        lines.selectAll("points")
-            .data(function(d) {return d})
+//points
+        svg.selectAll("points")
+            .data(function (d) {
+                return parsedData
+            })
             .enter()
             .append("circle")
-            .attr("cx", function(d) { return xscale(d.date); })
-            .attr("cy", function(d) { return yscale(d.close); })
-            .attr("r", 1)
-            .attr("class","point")
-            .style("opacity", 1);
+            .attr("cx", function (d) {
+                return xscale(d.date);
+            })
+            .attr("cy", function (d) {
+                return yscale(d.close);
+            })
+            .attr("r", 2)
+            .attr("class", "point")
+            .style("opacity", 0);
+
+//event
+        svg.selectAll("circles")
+            .data(function (d) {
+                return (parsedData);
+            })
+            .enter()
+            .append("circle")
+            .attr("cx", function (d) {
+                return xscale(d.date);
+            })
+            .attr("cy", function (d) {
+                return yscale(d.close);
+            })
+            .attr('r', 10)
+            .style("opacity", 0)
+
+            //mouseover
+            .on('mouseover', function (d) {
+                tooltip.transition()
+                    .delay(30)
+                    .duration(200)
+                    .style("opacity", 1);
+
+                tooltip.html(d.close)
+                    .style("left", (d3.event.pageX + 25) + "px")
+                    .style("top", (d3.event.pageY) + "px")
+            })
+
+            .on("mouseout", function (d) {
+                tooltip.transition()
+                    .duration(100)
+                    .style("opacity", 0);
+            });
+
+        var defs = svg.append("defs").append("clipPath")
+            .attr("id", "clip")
+            .append("rect")
+            .attr("x", margin.left)
+            .attr("width", width - margin.right)
+            .attr("height", height);
+        svg.call(zoom);
 
 
+        function zoom(svg) {
+
+            var extent = [
+                [margin.left, margin.top],
+                [width - margin.right, height - margin.top]
+            ];
+
+            var zooming = d3.zoom()
+                .scaleExtent([1, 3])
+                .translateExtent(extent)
+                .extent(extent)
+                .on("zoom", zoomed);
+
+            svg.call(zooming);
+
+            function zoomed() {
+
+                x.range([margin.left, width - margin.right]
+                    .map(d => d3.event.transform.applyX(d)));
+
+                svg.select(".path")
+                    .attr("d", line);
+
+                svg.select(".x-axis")
+                    .call(d3.axisBottom(x)
+                        .tickSizeOuter(0));
+            }
+        }
+
+        svg.call(hover)
+
+        function hover() {
+
+            var bisect = d3.bisector(d => d.date).left,
+                format = d3.format("+.0%"),
+                dateFormat = d3.timeFormat("%Y-%b-%d")
+
+            var focus = svg.append("g")
+                .attr("class", "focus")
+                .style("display", "none");
+
+            focus.append("line")
+                .attr("stroke", "#666")
+                .attr("stroke-width", 1)
+                .attr("y1", -height + margin.top)
+                .attr("y2", -margin.bottom);
+
+            focus.append("circle")
+                .attr("class", "circle")
+                .attr("r", 5)
+                .attr("dy", 5)
+                .attr("stroke", "steelblue")
+                .attr("fill", "#fff");
+
+            focus.append("text")
+                .attr("text-anchor", "middle")
+                .attr("dy", ".35em");
+
+            var overlay = svg.append("rect")
+                .attr("class", "overlay")
+                .attr("x", margin.left)
+                .attr("y", margin.top)
+                .attr("width", width - margin.right - margin.left - 1)
+                .attr("height", height - margin.bottom - margin.top)
+                .on("mouseover", () => focus.style("display", null))
+                .on("mouseout", () => focus.style("display", "none"))
+                .on("mousemove", mousemove);
+
+            function mousemove() {
+
+                var x0 = x.invert(d3.mouse(this)[0]);
+
+                var i = bisect(data, x0, 1),
+                    d0 = data[i - 1],
+                    d1 = data[i],
+                    d = x0 - d0.date > d1.date - x0 ? d1 : d0;
+
+                focus.select("line")
+                    .attr("transform",
+                        "translate(" + x(d.date) + "," + height + ")");
+
+                focus.selectAll(".circle")
+                    .attr("transform",
+                        "translate(" + x(d.date) + "," + y(d.close) + ")");
+
+                focus.select("text")
+                    .attr("transform",
+                        "translate(" + x(d.date) + "," + (height + margin.bottom) + ")")
+                    .text(dateFormat(d.date));
+            }
+        }
     });
 </script>
 </body>

@@ -1,0 +1,5 @@
+databaseChangeLog:
+  - include:
+      file: db/changelog/gspc.xml
+  - include:
+      file: db/changelog/gspc-import-data.xml

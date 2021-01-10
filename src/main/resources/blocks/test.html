@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Line chart zoom</title>
+  <script src="https://d3js.org/d3.v5.min.js"></script>
+  <style>
+
+      body {
+          margin: auto;
+          width: 850px;
+          padding-top: 45px;
+          font: 12px arial;
+      }
+
+      .overlay {
+          fill: none;
+          pointer-events: all;
+      }
+
+  </style>
+</head>
+
+<body>
+
+<svg id="chart" width="800" height="420"></svg>
+
+<script>
+
+    var parseDate = d3.timeParse("%Y-%m-%d");
+    var parsedData = d3.json("http://localhost:8080/getLimit", function (data) {
+        var parseDate = d3.timeParse("%Y-%m-%d");
+        return data.map(function (data) {
+            return {
+                date: (parseDate(data.date)),
+                value: data.close
+            }
+        });
+        // console.log(data);
+        // chart(parsedData);
+    }).then(d => console.log(d));
+
+
+//    d3.csv("aapl.csv", ({Date, Close}) => ({date: parseDate(Date), value: +Close}))
+//     .then(d => chart(d));
+</script>
+</body>
+</html>
