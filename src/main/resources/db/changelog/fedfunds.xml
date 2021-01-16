@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd
+    http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+    <changeSet author="fr3nzy" id="create-table-fedfunds">
+        <createSequence sequenceName="fedfunds_seq" cycle="false" dataType="bigint"/>
+        <createTable tableName="fedfunds">
+            <column name="id" type="bigint" defaultValueSequenceNext="fedfunds_seq">
+                <constraints nullable="false" primaryKey="true" unique="true"/>
+            </column>
+            <column name="date" type="timestamp"/>
+            <column name="value" type="double"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="fr3nzy" id="fedfunds-import-data">
+        <loadData tableName="fedfunds"
+                  file="../csv/fedfunds.csv"
+                  separator=","
+                  schemaName="public"
+                  relativeToChangelogFile="true">
+            <column name="date" type="DATE"/>
+            <column name="value" type="NUMERIC" header="FEDFUNDS"/>
+        </loadData>
+    </changeSet>
+</databaseChangeLog>

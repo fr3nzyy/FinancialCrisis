@@ -5,13 +5,13 @@ import java.time.LocalDate;
 
 public class GSPCModel {
 
-    public GSPCModel(Long id, LocalDate date, Long close) {
+    public GSPCModel(Long id, LocalDate date, Double close) {
         this.id = id;
         this.date = date;
         this.close = close;
     }
 
-    public GSPCModel(Long id, LocalDate date, Long open, Long high, Long low, Long close, Long adj_close, Long volume) {
+    public GSPCModel(Long id, LocalDate date, Double open, Double high, Double low, Double close, Double adj_close, Double volume) {
         this.id = id;
         this.date = date;
         this.open = open;
@@ -27,12 +27,12 @@ public class GSPCModel {
 
     private Long id;
     private LocalDate date;
-    private Long open;
-    private Long high;
-    private Long low;
-    private Long close;
-    private Long adj_close;
-    private Long volume;
+    private Double open;
+    private Double high;
+    private Double low;
+    private Double close;
+    private Double adj_close;
+    private Double volume;
 
     public Long getId() {
         return id;
@@ -50,51 +50,51 @@ public class GSPCModel {
         this.date = date;
     }
 
-    public Long getOpen() {
+    public Double getOpen() {
         return open;
     }
 
-    public void setOpen(Long open) {
+    public void setOpen(Double open) {
         this.open = open;
     }
 
-    public Long getHigh() {
+    public Double getHigh() {
         return high;
     }
 
-    public void setHigh(Long high) {
+    public void setHigh(Double high) {
         this.high = high;
     }
 
-    public Long getLow() {
+    public Double getLow() {
         return low;
     }
 
-    public void setLow(Long low) {
+    public void setLow(Double low) {
         this.low = low;
     }
 
-    public Long getClose() {
+    public Double getClose() {
         return close;
     }
 
-    public void setClose(Long close) {
+    public void setClose(Double close) {
         this.close = close;
     }
 
-    public Long getAdj_close() {
+    public Double getAdj_close() {
         return adj_close;
     }
 
-    public void setAdj_close(Long adj_close) {
+    public void setAdj_close(Double adj_close) {
         this.adj_close = adj_close;
     }
 
-    public Long getVolume() {
+    public Double getVolume() {
         return volume;
     }
 
-    public void setVolume(Long volume) {
+    public void setVolume(Double volume) {
         this.volume = volume;
     }
 }

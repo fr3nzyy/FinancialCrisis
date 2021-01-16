@@ -21,12 +21,22 @@ public class FCController {
     }
 
     @GetMapping(value = "get", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<GSPCModel>> findAll() {
-        return new ResponseEntity<>(fcService.findAll(), HttpStatus.OK);
+    public ResponseEntity<List<GSPCModel>> findAllGSPC() {
+        return new ResponseEntity<>(fcService.getAllGSPC(), HttpStatus.OK);
     }
 
     @GetMapping(value = "getLimit", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<GSPCLightModel>> getEntitiesByLimit() {
         return new ResponseEntity<>(fcService.getEntitiesByLimit(), HttpStatus.OK);
+    }
+
+    @GetMapping(value = "getFedFunds", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<FedFundsModel>> findAllFedFunds() {
+        return new ResponseEntity<>(fcService.findAllFedFunds(), HttpStatus.OK);
+    }
+
+    @GetMapping(value = "getCommon", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<CommonModel>> getAllCommon() {
+        return new ResponseEntity<>(fcService.getAllCommon(), HttpStatus.OK);
     }
 }

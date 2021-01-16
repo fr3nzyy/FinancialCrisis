@@ -4,9 +4,9 @@ import java.time.LocalDate;
 
 public class GSPCLightModel {
     private LocalDate date;
-    private Long close;
+    private Double close;
 
-    public GSPCLightModel(LocalDate date, Long close) {
+    public GSPCLightModel(LocalDate date, Double close) {
         this.date = date;
         this.close = close;
     }
@@ -18,7 +18,7 @@ public class GSPCLightModel {
         this.date = date;
     }
 
-    public void setClose(Long close) {
+    public void setClose(Double close) {
         this.close = close;
     }
 
@@ -26,7 +26,7 @@ public class GSPCLightModel {
         return date;
     }
 
-    public Long getClose() {
+    public Double getClose() {
         return close;
     }
 }

@@ -7,6 +7,7 @@
         stroke: steelblue;
         stroke-width: 1.5px;
     }
+
     .zoom {
         cursor: move;
         fill: none;
@@ -24,8 +25,6 @@
         width = +svg.attr("width") - margin.left - margin.right,
         height = +svg.attr("height") - margin.top - margin.bottom,
         height2 = +svg.attr("height") - margin2.top - margin2.bottom;
-
-    var parseDate = d3.timeParse("%m/%d/%Y %H:%M");
 
     var x = d3.scaleTime().range([0, width]),
         x2 = d3.scaleTime().range([0, width]),
@@ -46,13 +45,29 @@
         .extent([[0, 0], [width, height]])
         .on("zoom", zoomed);
 
-    var line = d3.line()
-        .x(function (d) { return x(d.Date); })
-        .y(function (d) { return y(d.Air_Temp); });
+    var lineGSPC = d3.line()
+        .x(function (d) {
+            return x(d.date);
+        })
+        .y(function (d) {
+            return y(d.gspcclose);
+        });
 
-    var line2 = d3.line()
-        .x(function (d) { return x2(d.Date); })
-        .y(function (d) { return y2(d.Air_Temp); });
+    var gspcLineSmallChart = d3.line()
+        .x(function (d) {
+            return x2(d.date);
+        })
+        .y(function (d) {
+            return y2(d.gspcclose);
+        });
+
+    var linefedFunds = d3.line()
+        .x(function (d) {
+            return x(d.date);
+        })
+        .y(function (d) {
+            return y(d.fedFund);
+        });
 
     var clip = svg.append("defs").append("svg:clipPath")
         .attr("id", "clip")
@@ -78,22 +93,27 @@
         .attr("transform", "translate(" + margin2.left + "," + margin2.top + ")");
 
     var parseDate = d3.timeParse("%Y-%m-%d");
-    fetch('http://localhost:8080/get')
+    var dd
+    fetch('http://localhost:8080/getCommon')
         .then(response => response.json())
         .then(data => {
             dd = data.map(function (d) {
                 return {
-                    // date: (parseDate(d.date)),
-                    Date: parseDate(d.date),
-                    Air_Temp: d.close
+                    date: parseDate(d.date),
+                    gspcclose: d.gspcclose,
+                    fedFund: d.fedFund
                 }
             });
             chart(dd);
         });
 
     function chart(data) {
-        x.domain(d3.extent(data, function(d) { return d.Date; }));
-        y.domain([0, d3.max(data, function (d) { return d.Air_Temp; })]);
+        x.domain(d3.extent(data, function (d) {
+            return d.date;
+        }));
+        y.domain([0, d3.max(data, function (d) {
+            return d.gspcclose;
+        })]);
         x2.domain(x.domain());
         y2.domain(y.domain());
 
@@ -110,12 +130,17 @@
         Line_chart.append("path")
             .datum(data)
             .attr("class", "line")
-            .attr("d", line);
+            .attr("d", lineGSPC);
+        Line_chart.append("path")
+            .datum(data)
+            .attr("class", "line")
+            .style("stroke", "red")
+            .attr("d", linefedFunds);
 
         context.append("path")
             .datum(data)
             .attr("class", "line")
-            .attr("d", line2);
+            .attr("d", gspcLineSmallChart);
 
 
         context.append("g")
@@ -134,16 +159,13 @@
             .attr("height", height)
             .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
             .call(zoom);
-
-
-        console.log(data);
     }
 
     function brushed() {
         if (d3.event.sourceEvent && d3.event.sourceEvent.type === "zoom") return; // ignore brush-by-zoom
         var s = d3.event.selection || x2.range();
         x.domain(s.map(x2.invert, x2));
-        Line_chart.select(".line").attr("d", line);
+        Line_chart.select(".line").attr("d", lineGSPC);
         focus.select(".axis--x").call(xAxis);
         svg.select(".zoom").call(zoom.transform, d3.zoomIdentity
             .scale(width / (s[1] - s[0]))
@@ -154,15 +176,10 @@
         if (d3.event.sourceEvent && d3.event.sourceEvent.type === "brush") return; // ignore zoom-by-brush
         var t = d3.event.transform;
         x.domain(t.rescaleX(x2).domain());
-        Line_chart.select(".line").attr("d", line);
+        Line_chart.select(".line").attr("d", lineGSPC);
+        // Line_chart.select(".line").attr("d", linefedFunds);
         focus.select(".axis--x").call(xAxis);
         context.select(".brush").call(brush.move, x.range().map(t.invertX, t));
-    }
-
-    function type(d) {
-        d.Date = parseDate(d.Date);
-        d.Air_Temp = +d.Air_Temp;
-        return d;
     }
 
 </script>

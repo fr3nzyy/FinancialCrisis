@@ -8,10 +8,8 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface FCRepository extends JpaRepository<GSPC, Long> {
-    @Query(value = "SELECT * FROM GSPC e ORDER BY e.date LIMIT :limit", nativeQuery=true)
-    List<GSPC> getEntitiesByLimit(@Param("limit") int limit);
+public interface FedFundsRepository extends JpaRepository<FedFunds, Long> {
 
-    List<GSPC> findAll();
+    List<FedFunds> findAll();
 
 }
