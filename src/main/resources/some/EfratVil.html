@@ -99,11 +99,29 @@
         .then(data => {
             dd = data.map(function (d) {
                 return {
-                    date: parseDate(d.date),
-                    gspcclose: d.gspcclose,
-                    fedFund: d.fedFund
-                }
-            });
+                    id: "gspcclose",
+                    values: data.map(function(d) {
+                        return {date: parseDate(d.date), temperature: d.gspcclose};
+                    })};
+                });
+            dd.put(data.map(function (d) {
+                return {
+                    id: "fedFund",
+                    values: data.map(function(d) {
+                        return {date: parseDate(d.date), temperature: d.fedFund};
+                    })};
+            }))
+
+
+
+            // dd = data.slice(1).map(function(id) {
+            //     return {
+            //         id: id,
+            //         values: data.map(function(d) {
+            //             return {date: d.date, temperature: d[id]};
+            //         })
+            //     };
+            // });
             chart(dd);
         });
 
