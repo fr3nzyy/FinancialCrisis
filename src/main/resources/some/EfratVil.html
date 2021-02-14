@@ -45,29 +45,40 @@
         .extent([[0, 0], [width, height]])
         .on("zoom", zoomed);
 
-    var lineGSPC = d3.line()
-        .x(function (d) {
+    var line = d3.line()
+        .curve(d3.curveBasis)
+        .x(function(d) {
             return x(d.date);
         })
-        .y(function (d) {
-            return y(d.gspcclose);
+        .y(function(d) {
+            return y(d.value);
         });
+
+    // var lineGSPC = d3.line()
+    //     .x(function (d) {
+    //         return x(d.date);
+    //     })
+    //     .y(function (d) {
+    //         return y(d.gspcclose);
+    //     });
 
     var gspcLineSmallChart = d3.line()
-        .x(function (d) {
-            return x2(d.date);
-        })
+        .x(function (d) { return (d, function(c) { if(c.name === 'GSPC') return x2(c.values, function(d) { return d.date; }); })})
+
+        //     function (d) {
+        //     return x2(d.date);
+        // })
         .y(function (d) {
-            return y2(d.gspcclose);
+            return y2(d.value);
         });
 
-    var linefedFunds = d3.line()
-        .x(function (d) {
-            return x(d.date);
-        })
-        .y(function (d) {
-            return y(d.fedFund);
-        });
+    // var linefedFunds = d3.line()
+    //     .x(function (d) {
+    //         return x(d.date);
+    //     })
+    //     .y(function (d) {
+    //         return y(d.fedFund);
+    //     });
 
     var clip = svg.append("defs").append("svg:clipPath")
         .attr("id", "clip")
@@ -93,45 +104,19 @@
         .attr("transform", "translate(" + margin2.left + "," + margin2.top + ")");
 
     var parseDate = d3.timeParse("%Y-%m-%d");
-    var dd
-    fetch('http://localhost:8080/getCommon')
+
+    fetch('http://localhost:8080/getCommon1')
         .then(response => response.json())
         .then(data => {
-            dd = data.map(function (d) {
-                return {
-                    id: "gspcclose",
-                    values: data.map(function(d) {
-                        return {date: parseDate(d.date), temperature: d.gspcclose};
-                    })};
-                });
-            dd.put(data.map(function (d) {
-                return {
-                    id: "fedFund",
-                    values: data.map(function(d) {
-                        return {date: parseDate(d.date), temperature: d.fedFund};
-                    })};
-            }))
-
-
-
-            // dd = data.slice(1).map(function(id) {
-            //     return {
-            //         id: id,
-            //         values: data.map(function(d) {
-            //             return {date: d.date, temperature: d[id]};
-            //         })
-            //     };
-            // });
-            chart(dd);
+            chart(data);
         });
 
     function chart(data) {
-        x.domain(d3.extent(data, function (d) {
-            return d.date;
-        }));
-        y.domain([0, d3.max(data, function (d) {
-            return d.gspcclose;
-        })]);
+        x.domain(d3.extent(data, function(d) { return d.date; }));
+        y.domain([
+            d3.min(data, function(c) { return d3.min(c.values, function(d) { return d.value; }); }),
+            d3.max(data, function(c) { return d3.max(c.values, function(d) { return d.value; }); })
+        ]);
         x2.domain(x.domain());
         y2.domain(y.domain());
 
@@ -148,12 +133,12 @@
         Line_chart.append("path")
             .datum(data)
             .attr("class", "line")
-            .attr("d", lineGSPC);
-        Line_chart.append("path")
-            .datum(data)
-            .attr("class", "line")
-            .style("stroke", "red")
-            .attr("d", linefedFunds);
+            .attr("d", line);
+        // Line_chart.append("path")
+        //     .datum(data)
+        //     .attr("class", "line")
+        //     .style("stroke", "red")
+        //     .attr("d", linefedFunds);
 
         context.append("path")
             .datum(data)
@@ -183,7 +168,7 @@
         if (d3.event.sourceEvent && d3.event.sourceEvent.type === "zoom") return; // ignore brush-by-zoom
         var s = d3.event.selection || x2.range();
         x.domain(s.map(x2.invert, x2));
-        Line_chart.select(".line").attr("d", lineGSPC);
+        Line_chart.select(".line").attr("d", line);
         focus.select(".axis--x").call(xAxis);
         svg.select(".zoom").call(zoom.transform, d3.zoomIdentity
             .scale(width / (s[1] - s[0]))
@@ -194,7 +179,7 @@
         if (d3.event.sourceEvent && d3.event.sourceEvent.type === "brush") return; // ignore zoom-by-brush
         var t = d3.event.transform;
         x.domain(t.rescaleX(x2).domain());
-        Line_chart.select(".line").attr("d", lineGSPC);
+        Line_chart.select(".line").attr("d", line);
         // Line_chart.select(".line").attr("d", linefedFunds);
         focus.select(".axis--x").call(xAxis);
         context.select(".brush").call(brush.move, x.range().map(t.invertX, t));

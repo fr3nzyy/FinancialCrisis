@@ -39,4 +39,9 @@ public class FCController {
     public ResponseEntity<List<CommonModel>> getAllCommon() {
         return new ResponseEntity<>(fcService.getAllCommon(), HttpStatus.OK);
     }
+
+    @GetMapping(value = "getCommon1", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<CommonModelList1>> getAllCommon1() {
+        return new ResponseEntity<>(fcService.getAllCommon1(), HttpStatus.OK);
+    }
 }
