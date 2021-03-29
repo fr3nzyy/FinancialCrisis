@@ -5,3 +5,5 @@ databaseChangeLog:
       file: db/changelog/gspc-import-data.xml
   - include:
       file: db/changelog/fedfunds.xml
+  - include:
+      file: db/changelog/cpi.xml

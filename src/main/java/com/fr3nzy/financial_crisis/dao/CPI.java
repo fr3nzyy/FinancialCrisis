@@ -1,14 +1,22 @@
-package com.fr3nzy.financial_crisis.controller;
+package com.fr3nzy.financial_crisis.dao;
 
+import javax.persistence.Entity;
+import javax.persistence.Id;
 import java.time.LocalDate;
 
-public class FedFundsModel {
+@Entity(name = "cpi")
+public class CPI {
+    @Id
+    private Long id;
     private LocalDate date;
     private Double value;
 
-    public FedFundsModel(LocalDate date, Double value) {
-        this.date = date;
-        this.value = value;
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public LocalDate getDate() {

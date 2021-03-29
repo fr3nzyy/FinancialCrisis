@@ -1,22 +1,16 @@
-package com.fr3nzy.financial_crisis.controller;
+package com.fr3nzy.financial_crisis.controller.model;
+
+import lombok.Builder;
+import lombok.Data;
 
 import java.time.LocalDate;
+
 
 public class CommonModel {
     private LocalDate date;
     private Double GSPCClose;
-    private double FedFund;
-
-    public CommonModel(LocalDate date, Double GSPCClose, Double fedFund) {
-        this.date = date;
-        this.GSPCClose = GSPCClose;
-        FedFund = fedFund;
-    }
-
-    public CommonModel(LocalDate date, Double GSPCClose) {
-        this.date = date;
-        this.GSPCClose = GSPCClose;
-    }
+    private Double FedFund;
+    private Double cpi;
 
     public LocalDate getDate() {
         return date;
@@ -41,4 +35,13 @@ public class CommonModel {
     public void setFedFund(Double fedFund) {
         FedFund = fedFund;
     }
+
+    public Double getCpi() {
+        return cpi;
+    }
+
+    public void setCpi(Double cpi) {
+        this.cpi = cpi;
+    }
+
 }

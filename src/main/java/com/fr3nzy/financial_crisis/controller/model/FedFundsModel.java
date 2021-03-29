@@ -1,12 +1,12 @@
-package com.fr3nzy.financial_crisis.controller;
+package com.fr3nzy.financial_crisis.controller.model;
 
 import java.time.LocalDate;
 
-public class CommonModel1 {
+public class FedFundsModel {
     private LocalDate date;
-    private double value;
+    private Double value;
 
-    public CommonModel1(LocalDate date, double value) {
+    public FedFundsModel(LocalDate date, Double value) {
         this.date = date;
         this.value = value;
     }
@@ -19,11 +19,11 @@ public class CommonModel1 {
         this.date = date;
     }
 
-    public double getValue() {
+    public Double getValue() {
         return value;
     }
 
-    public void setValue(double value) {
+    public void setValue(Double value) {
         this.value = value;
     }
 }
